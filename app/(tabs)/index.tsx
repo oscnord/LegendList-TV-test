@@ -1,79 +1,109 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { FlatList, StyleSheet, TouchableHighlight, View } from "react-native";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useScale } from '@/hooks/useScale';
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { useScale } from "@/hooks/useScale";
+import { LegendList } from "@legendapp/list";
 
-export default function HomeScreen() {
-  const styles = useHomeScreenStyles();
+const sampleData = [
+  { id: "1", title: "Box 1", color: "#FF6B6B" },
+  { id: "2", title: "Box 2", color: "#4ECDC4" },
+  { id: "3", title: "Box 3", color: "#45B7D1" },
+  { id: "4", title: "Box 4", color: "#96CEB4" },
+  { id: "5", title: "Box 5", color: "#FECA57" },
+  { id: "6", title: "Box 6", color: "#FF9FF3" },
+];
+
+export default function LegendListFocusDemo() {
+  const styles = useFocusDemoScreenStyles();
+  const renderFocusableBox = ({ item }: { item: (typeof sampleData)[0] }) => {
+    return (
+      <TouchableHighlight
+        style={[styles.focusableBox, { backgroundColor: item.color }]}
+        onPress={() => console.log(`Pressed ${item.title}`)}
+      >
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <ThemedText style={styles.boxText}>{item.title}</ThemedText>
+        </View>
+      </TouchableHighlight>
+    );
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }
-    >
+    <View style={{ padding: 25, backgroundColor: "#252525" }}>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
+        <ThemedText type="title">List TV focus test</ThemedText>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{' '}
-          to see changes. Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this
-          starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText>{' '}
-          to get a fresh <ThemedText type="defaultSemiBold">app</ThemedText>{' '}
-          directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+
+      <View style={styles.legendListContainer}>
+        <ThemedText type="title">LegendList Cannot move -{">"} </ThemedText>
+        <LegendList
+          data={sampleData}
+          renderItem={renderFocusableBox}
+          keyExtractor={(item) => item.id}
+          style={styles.legendList}
+          recycleItems
+          horizontal
+        />
+
+        <ThemedText type="title">FlatList</ThemedText>
+        <FlatList
+          data={sampleData}
+          renderItem={renderFocusableBox}
+          keyExtractor={(item) => item.id}
+          style={styles.legendList}
+          horizontal
+        />
+      </View>
+    </View>
   );
 }
 
-const useHomeScreenStyles = function () {
+const useFocusDemoScreenStyles = function () {
   const scale = useScale();
   return StyleSheet.create({
-    titleContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8 * scale,
-    },
-    stepContainer: {
-      gap: 8 * scale,
-      marginBottom: 8 * scale,
-    },
-    reactLogo: {
-      height: 178 * scale,
-      width: 290 * scale,
-      bottom: 0,
+    headerImage: {
+      color: "#808080",
+      bottom: -45 * scale,
       left: 0,
-      position: 'absolute',
+      position: "absolute",
+    },
+    titleContainer: {
+      flexDirection: "row",
+      gap: 8 * scale,
+    },
+    legendListContainer: {
+      marginTop: 20 * scale,
+      marginBottom: 20 * scale,
+    },
+    sectionTitle: {
+      marginBottom: 16 * scale,
+    },
+    legendList: {
+      height: 150 * scale,
+      borderRadius: 8 * scale,
+      backgroundColor: "#212121",
+      padding: 8 * scale,
+    },
+    focusableBox: {
+      padding: 20 * scale,
+      marginVertical: 8 * scale,
+      marginHorizontal: 12 * scale,
+      borderRadius: 12 * scale,
+      alignItems: "center",
+      justifyContent: "center",
+      minHeight: 100 * scale,
+      elevation: 3,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+    },
+    boxText: {
+      fontSize: 18 * scale,
+      fontWeight: "bold",
+      color: "#FFFFFF",
+      textAlign: "center",
     },
   });
 };
